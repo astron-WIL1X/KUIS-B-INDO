@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis PSAT Bahasa Indonesia</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 500px;
+            background: #ffffff;
+            min-height: 100vh;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: #16a34a;
+            font-size: 24px;
+            margin: 0 0 5px 0;
+            font-weight: bold;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .quiz-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .text-reading {
+            background-color: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            padding: 12px;
+            font-size: 14px;
+            color: #334155;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+            white-space: pre-line;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 15px;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* 1. KETIKA DIKLIK / DIPILIH (BERWARNA BIRU) */
+        .option-btn.selected {
+            background-color: #2563eb !important;
+            border-color: #2563eb !important;
+            color: #ffffff !important;
+        }
+
+        /* 2. KETIKA JAWABAN BENAR (BERWARNA HIJAU) */
+        .option-btn.correct {
+            background-color: #22c55e !important;
+            border-color: #22c55e !important;
+            color: #ffffff !important;
+        }
+
+        /* 3. KETIKA JAWABAN SALAH (BERWARNA MERAH) */
+        .option-btn.wrong {
+            background-color: #ef4444 !important;
+            border-color: #ef4444 !important;
+            color: #ffffff !important;
+        }
+
+        .submit-container {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 50px;
+        }
+
+        .btn-submit-all {
+            background-color: #16a34a;
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /*POP-UP MODAL HASIL NILAI */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .modal-box {
+            background: #ffffff;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 20px;
+            color: #94a3b8;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #1e293b;
+            margin-bottom: 20px;
+        }
+
+        .modal-score {
+            font-size: 72px;
+            font-weight: bold;
+            color: #15803d;
+            margin: 15px 0;
+        }
+
+        .modal-detail {
+            font-size: 16px;
+            color: #475569;
+            margin-bottom: 25px;
+        }
+
+        .btn-retry {
+            background-color: #475569;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="header">
+        <h1>Kuis PSAT Bahasa Indonesia</h1>
+        <p>SMK N 1 Kota Bekasi | TA 2025/2026</p>
+    </div>
+
+    <div id="quiz-content"></div>
+
+    <div class="submit-container">
+        <button class="btn-submit-all" onclick="prosesSelesaiKuis()">Selesai Kuis</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="scoreModal">
+    <div class="modal-box">
+        <span class="modal-close" onclick="tutupModal()">&times;</span>
+        <div class="modal-title">Hasil Kamu</div>
+        <div class="modal-score" id="text-score-besar">0</div>
+        <div class="modal-detail" id="text-detail-benar">Benar 0 dari 25 soal.</div>
+        <button class="btn-retry" onclick="ulangKuis()">Ulangi Kuis</button>
+    </div>
+</div>
+
+<script>
+    const dataSoal = [
+        { id: 1, text: "Pembeli: 'Waduh Mas, Rp150.000 apa tidak boleh kurang? Kan bahannya agak tipis.'\nPenjual: 'Belum bisa Bu, ini bahannya adem dan impor asli. Pasnya Rp135.000 deh.'", q: "1. Topik utama pada penggalan teks negosiasi di atas adalah...", options: ["A. Keluhan tentang bahan pakaian", "B. Tawar-menawar ketetapan harga sepotong pakaian", "C. Penjelasan penjual tentang barang impor", "D. Pembatalan sepihak transaksi transaksi jual beli"], correct: 1 },
+        { id: 2, text: "", q: "2. Di dalam kaidah negosiasi, pasangan tuturan yang paling tepat apabila pihak pertama 'Mengucapkan Salam' adalah...", options: ["A. Mengajukan protes keras", "B. Membalas ucapan salam", "C. Meminta tolong diambilkan barang", "D. Menolak barang yang ditawarkan"], correct: 1 },
+        { id: 3, text: "", q: "3. Manakah di antara pilihan kalimat berikut yang merupakan contoh kalimat persuasif dalam negosiasi?", options: ["A. Harganya harus diturunkan sekarang juga ya, Pak!", "B. Berapa harga pas untuk tas sekolah berwarna hitam ini?", "C. Cobalah ambil produk ini Bu, dijamin bahan lebih awet dan hemat listrik.", "D. Maaf, barang yang sudah dibeli tidak dapat dikembalikan."], correct: 2 },
+        { id: 4, text: "Anak: 'Yah, setelah lulus SMP ini saya ingin melanjutkan ke SMK jurusan Multimedia.'\nAyah: 'Kenapa tidak ke SMA saja? Pilihan jurusan kuliahnya nanti jauh lebih banyak.'", q: "4. Topik utama dari penggalan teks negosiasi keluarga di atas adalah...", options: ["A. Larangan keras ayah bermain komputer", "B. Penentuan nominal biaya bulanan sekolah", "C. Diskusi penentuan pilihan sekolah lanjutan", "D. Pendaftaran kursus teknologi baru untuk anak"], correct: 2 },
+        { id: 5, text: "", q: "5. Bagian pembuka teks negosiasi yang biasanya berisi sapaan atau salam pembuka dinamakan struktur...", options: ["A. Orientasi", "B. Pengajuan", "C. Penawaran", "D. Persetujuan"], correct: 0 },
+        { id: 6, text: "Pembeli: 'Selamat pagi Pak, apakah di sini menjual kamus Bahasa Indonesia - Inggris yang tebal?'", q: "6. Berdasarkan strukturnya, tindakan pembeli yang menyampaikan maksud barang yang dicarinya disebut bagian...", options: ["A. Orientasi", "B. Pengajuan", "C. Penawaran", "D. Penutup"], correct: 1 },
+        { id: 7, text: "", q: "7. Bagian inti teks negosiasi di mana kedua belah pihak melakukan aksi tawar-menawar harga dinamakan struktur...", options: ["A. Orientasi", "B. Pengajuan", "C. Penawaran", "D. Penutup"], correct: 2 },
+        { id: 8, text: "Penjual: 'Ya sudah, Rp85.000 saja bagaimana, Mbak?'\nMbak: 'Nah, kalau harga segitu saya setuju, Pak.'", q: "8. Penggalan dialog di atas menggambarkan tercapainya kesepakatan, yang termasuk ke dalam struktur...", options: ["A. Orientasi", "B. Pengajuan", "C. Penawaran", "D. Persetujuan"], correct: 3 },
+        { id: 9, text: "Pembeli: 'Terima kasih banyak ya Pak.'\nPenjual: 'Sama-sama Bu, selamat belanja kembali.'", q: "9. Kutipan teks di atas merupakan bagian akhir negosiasi, yaitu struktur...", options: ["A. Orientasi", "B. Pengajuan", "C. Penawaran", "D. Penutup"], correct: 3 },
+        { id: 10, text: "'Ki Hajar Dewantara mendirikan perguruan Taman Siswa yang memberikan kesempatan bagi para perkaum pribumi jelata untuk bisa mengecap pendidikan.'", q: "10. Pernyataan yang sesuai dengan isi kutipan teks biografi di atas adalah...", options: ["A. Taman Siswa didirikan khusus untuk kaum bangsawan", "B. Ki Hajar Dewantara melarang kaum pribumi bersekolah", "C. Perguruan Taman Siswa membuka akses pendidikan bagi kaum pribumi jelata", "D. Akses pendidikan zaman dahulu sangat mudah"], correct: 2 },
+        { id: 11, text: "", q: "11. Kejeniusan atau prestasi monumental tokoh dalam teks biografi yang belum tentu bisa dimiliki oleh orang umum dinamakan...", options: ["A. Sikap keteladanan", "B. Keistimewaan tokoh", "C. Orientasi tokoh", "D. Masalah tokoh"], correct: 1 },
+        { id: 12, text: "", q: "12. Sifat-sifat mulia dari tokoh dalam biografi yang dapat dicontoh oleh pembaca dalam kehidupan sehari-hari dinamakan...", options: ["A. Keistimewaan tokoh", "B. Sikap keteladanan tokoh", "C. Konflik tokoh", "D. Reorientasi"], correct: 1 },
+        { id: 13, text: "", q: "13. Bagian akhir dari teks biografi yang berisi kesimpulan atau pandangan penulis terhadap jasa-jasa tokoh dinamakan...", options: ["A. Orientasi", "B. Peristiwa Penting", "C. Reorientasi", "D. Koda"], correct: 2 },
+        { id: 14, text: "'Mohammad Hatta dikenal sangat mencintai buku. Bahkan saat diasingkan oleh penjajah ke Digul, beliau membawa puluhan peti berisi buku-bukunya.'", q: "14. Isi pokok yang dibahas pada kutipan teks biografi Bung Hatta di atas adalah...", options: ["A. Penderitaan Bung Hatta di Digul", "B. Kegemaran luar biasa Bung Hatta dalam membaca dan membawa buku", "C. Kekejaman penjajah Belanda", "D. Pemusnahan buku-buku lama"], correct: 1 },
+        { id: 15, text: "'Jenderal Soedirman tetap memimpin pasukan gerilya melawan penjajah meskipun kondisi fisiknya sedang sakit parah dan harus ditandu.'", q: "15. Keteladanan tokoh Jenderal Soedirman yang bisa kita terapkan adalah...", options: ["A. Berjalan kaki menyusuri hutan", "B. Meminta bantuan ditandu saat bepergian", "C. Memiliki semangat juang yang tinggi dan pantang menyerah", "D. Menolak berobat ke dokter saat sakit"], correct: 2 },
+        { id: 16, text: "'B.J. Habibie selalu bangun pukul 04.00 pagi untuk beribadah, kemudian langsung membaca buku sains tanpa membuang waktu sedikit pun.'", q: "16. Sifat keteladanan yang menonjol dari figur B.J. Habibie pada teks tersebut adalah...", options: ["A. Tidur larut malam", "B. Disiplin tinggi dalam memanfaatkan waktu untuk hal bermanfaat", "C. Keinginan membuat karya fiksi", "D. Rutinitas belajar saat fajar saja"], correct: 1 },
+        { id: 17, text: "'Chairil Anwar melalui puisinya yang berjudul Aku mendobrak gaya penulisan puisi lama yang kaku.'", q: "17. Informasi yang sesuai dengan isi teks biografi Chairil Anwar di atas adalah...", options: ["A. Chairil Anwar penulis cerita pendek", "B. Puisi berjudul 'Aku' berhasil mendobrak kekakuan gaya puisi lama", "C. Chairil Anwar menolak sajak modern", "D. Gaya penulisan Chairil Anwar sangat kaku"], correct: 1 },
+        { id: 18, text: "Data Kunjungan Perpustakaan:\n- Senin: 15 siswa\n- Selasa: 30 siswa\n- Kamis: 45 siswa\n- Jumat: 10 siswa", q: "18. Berdasarkan data di atas, hari kunjungan dengan jumlah siswa tertinggi adalah...", options: ["A. Senin", "B. Selasa", "C. Kamis", "D. Jumat"], correct: 2 },
+        { id: 19, text: "'Di lengang malam yang bisu\nAir mata ini jatuh satu-satu\nMengingat senyum wajah ibuku\nYang kini telah jauh di liang kubur...'", q: "19. Suasana yang terbangun dalam kutipan puisi di atas adalah...", options: ["A. Gembira", "B. Tegang", "C. Sedih/Haru", "D. Penuh semangat"], correct: 2 },
+        { id: 20, text: "'Darah mengalir di tanah airku\nSebutir peluru menembus dadamu\nNamun kau tetap maju membawa bendera itu'", q: "20. Suasana yang terpancar kuat dari bait puisi perjuangan di atas adalah...", options: ["A. Sunyi gelisah", "B. Heroik / Penuh semangat", "C. Kecewa mendalam", "D. Takut dan cemas"], correct: 1 },
+        { id: 21, text: "'Mari berjalan ke arah timur\nMenyambut terbitnya sang mentari\nMenghapus sisa malam yang kelam...'", q: "21. Kata 'mentari' pada kutipan puisi di atas melambangkan makna...", options: ["A. Rasa malas", "B. Harapan baru / Masa depan cerah", "C. Kemarahan", "D. Kegelapan"], correct: 1 },
+        { id: 22, text: "'Wahai pemuda penonton TV\nApakah kau akan diam membatu saja?\nMelihat negerimu dikuasai korupsi ini!'", q: "22. Nada yang digunakan oleh penyair dalam menyampaikan puisi di atas adalah...", options: ["A. Menyindir / Menggugah kesadaran", "B. Memohon belas kasihan", "C. Memuji keindahan", "D. Bercanda gurau"], correct: 0 },
+        { id: 23, text: "'Desir angin malam menusuk pori-pori kulitku\nDinginnya merayap hingga ke tulang...'", q: "23. Imaji atau citraan yang menonjol pada penggalan puisi di atas adalah...", options: ["A. Penglihatan (Visual)", "B. Pendengaran (Auditif)", "C. Perasaan/Perabaan (Taktil)", "D. Penciuman"], correct: 2 },
+        { id: 24, text: "", q: "24. Di dalam suatu forum diskusi, manakah contoh kalimat menyanggah pendapat orang lain yang paling santun?", options: ["A. Pendapat Anda sangat buruk!", "B. Saya rasa usulan Saudara itu salah total.", "C. Maaf, saya kurang sependapat karena anggaran kita belum mencukupi.", "D. Saya tidak mau mendengarkan argumen Anda."], correct: 2 },
+        { id: 25, text: "'Burung hitam terbang di atas langit kelam\nMembawa kabar duka yang mencengkeram malam...'", q: "25. Makna kata 'langit kelam' melambangkan situasi...", options: ["A. Kebahagiaan", "B. Kedukaan / Penderitaan", "C. Keindahan alam", "D. Keberhasilan"], correct: 1 }
+    ];
+
+    let jawabanSiswa = new Array(dataSoal.length).fill(null);
+    const containerSoal = document.getElementById('quiz-content');
+    
+    dataSoal.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'quiz-card';
+        
+        let textReadingHtml = item.text ? `<div class="text-reading">${item.text}</div>` : '';
+        
+        card.innerHTML = `
+            <div class="question-text">${item.q}</div>
+            ${textReadingHtml}
+            <div class="options-list">
+                <button class="option-btn" id="opt-${index}-0" onclick="pilihOpsi(${index}, 0)">${item.options[0]}</button>
+                <button class="option-btn" id="opt-${index}-1" onclick="pilihOpsi(${index}, 1)">${item.options[1]}</button>
+                <button class="option-btn" id="opt-${index}-2" onclick="pilihOpsi(${index}, 2)">${item.options[2]}</button>
+                <button class="option-btn" id="opt-${index}-3" onclick="pilihOpsi(${index}, 3)">${item.options[3]}</button>
+            </div>
+        `;
+        containerSoal.appendChild(card);
+    });
+
+    function pilihOpsi(indexSoal, nomorOpsi) {
+        for (let i = 0; i < 4; i++) {
+            document.getElementById(`opt-${indexSoal}-${i}`).classList.remove('selected');
+        }
+        jawabanSiswa[indexSoal] = nomorOpsi;
+        document.getElementById(`opt-${indexSoal}-${nomorOpsi}`).classList.add('selected');
+    }
+
+    function prosesSelesaiKuis() {
+        let totalBenar = 0;
+        let adaKosong = jawabanSiswa.includes(null);
+        
+        if (adaKosong) {
+            let konfirmasi = confirm("Ada soal yang belum diisi. Tetap selesaikan kuis?");
+            if (!konfirmasi) return;
+        }
+
+        dataSoal.forEach((item, indexSoal) => {
+            const jawabanBenar = item.correct;
+            const jawabanAnda = jawabanSiswa[indexSoal];
+
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`opt-${indexSoal}-${i}`).classList.remove('selected');
+            }
+
+            if (jawabanAnda !== null) {
+                if (jawabanAnda === jawabanBenar) {
+                    totalBenar++;
+                    document.getElementById(`opt-${indexSoal}-${jawabanAnda}`).classList.add('correct');
+                } else {
+                    document.getElementById(`opt-${indexSoal}-${jawabanAnda}`).classList.add('wrong');
+                    document.getElementById(`opt-${indexSoal}-${jawabanBenar}`).classList.add('correct');
+                }
+            } else {
+                document.getElementById(`opt-${indexSoal}-${jawabanBenar}`).classList.add('correct');
+            }
+        });
+
+        const nilaiAkhir = Math.round((totalBenar / dataSoal.length) * 100);
+        document.getElementById('text-score-besar').innerText = nilaiAkhir;
+        document.getElementById('text-detail-benar').innerText = `Benar ${totalBenar} dari ${dataSoal.length} soal.`;
+        document.getElementById('scoreModal').style.display = 'flex';
+    }
+
+    function tutupModal() {
+        document.getElementById('scoreModal').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function ulangKuis() {
+        jawabanSiswa.fill(null);
+        dataSoal.forEach((item, indexSoal) => {
+            for (let i = 0; i < 4; i++) {
+                const btn = document.getElementById(`opt-${indexSoal}-${i}`);
+                btn.classList.remove('selected', 'correct', 'wrong');
+            }
+        });
+        document.getElementById('scoreModal').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
